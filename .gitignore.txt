@@ -1,0 +1,6 @@
+/max_temp
+/mean_temp
+/min_temp
+/rainfall
+/testing
+/ipynb_checkpoints
