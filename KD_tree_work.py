@@ -10,15 +10,15 @@ from scipy.spatial import *
 import random
 import numpy as np
 
-weather_data = pd.read_csv("C:/Users/user/Documents/University/Foundations_Of_Data_Science/Group_Project/met_data_complete.csv", header = [0,1], index_col = [0,1])
-traffic_data_main_roads = pd.read_csv("C:/Users/user/Documents/University/Foundations_Of_Data_Science/Group_Project/Raw_count_data_major_roads.csv")
+weather_data = pd.read_csv("met_data_complete.csv", header = [0,1], index_col = [0,1])
+traffic_data_main_roads = pd.read_csv("Raw_count_data_major_roads.csv")
 
 
 weather_data.head()
 
 weather_locations = weather_data.columns
-for thing in weather_locations[0:10]:
-    print(thing)
+# for thing in weather_locations[0:10]:
+#     print(thing)
 
 the_tree = cKDTree([thing for thing in weather_locations])
 to_query = []
@@ -54,7 +54,7 @@ traffic_data_main_roads["rainfall"] = ""
 
 def merging(row):
     loc = (row["S Ref E"], row["S Ref N"])
-    print(loc)
+    #print(loc)
     nearest_points = the_tree.query_ball_point(loc, r = 10000)
     trial_rows = weather_data.loc[row["dCount"]]
     trial_cols = trial_rows[trial_rows.columns[nearest_points]]
