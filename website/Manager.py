@@ -5,8 +5,12 @@ import json
 from os import curdir, sep
 from scipy.spatial import *
 import pandas as pd
+from convertbng.util import convert_lonlat, convert_bng
+
 '''
 Developed with PYTHON 3.7
+The convertbng python library is being used to convert between easting and northing, this is not supported on 
+64-bit Windows, but runs fully on Mac and Linux systems
 Basic map generator, intended that it will be possible for it to take the target easting and northing, then return
 a suitable map with markers added in, along with their colours
 Hopefully possible to extend the functionality to colour entire roads
@@ -22,6 +26,50 @@ class MapRenderer():
     def get_locations(self,easting,northing,radius):
         results = self.the_tree.query_ball_point([(easting, northing)], r=radius)
         return results
+    def render_map(self, easting, northing):
+        markers = ''
+        for point in self.get_locations(easting, northing, 50000):
+            coords = self.weather.loc[easting, northing]
+            coords = convert_lonlat([coords[0]],[coords[1]])
+            markers += 'var marker = new google.maps.Marker({position: {lat: {lat}, lng: {lng}}, map: map});'.format(lat=coords[1][0],
+                                                                                                          lng=coords[0][0])
+        google_map = ''''
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <style>
+                            /* Set the size of the div element that contains the map */
+                                #map {
+                                height: {height};  /* The height is 400 pixels */
+                                width: {width};  /* The width is the width of the web page */
+                                }
+                        </style>
+                    </head>
+                    <body>
+                        <h3>My Google Maps Demo</h3>
+                        <!--The div element for the map -->
+                        <div id="map"></div>
+                        <script>
+                    // Initialize and add the map
+                    function initMap() {
+                          // The map, centered at target location
+                          var map = new google.maps.Map(
+                          document.getElementById('map'), {zoom: {zoom}, center: {lat: {centre_lat}, lng: {centre_lng}});
+                          {markers}
+                    }
+                        </script>
+                            <script async defer
+                            src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+                        </script>
+                    </body>
+                </html>
+                '''.format(height='80%',
+                           width='80%',
+                           zoom=4,
+                           center_lon=convert_lonlat([easting], [northing])[0][0],
+                           center_lat=convert_lonlat([easting], [northing])[1][0],
+                           markers=markers)
+        return google_map
 
 '''
 Very primitive HTTP server to allow the acceptance of requests and the use of our existing systems to query the 
@@ -41,24 +89,28 @@ class MyServer(server.BaseHTTPRequestHandler):
     # override of the BaseHTTPRequestHandler function to handle GET requests
     def do_GET(self):
         params = parse.parse_qs(parse.urlsplit(self.path).query)
-        if params.get('northing') is not None and params.get('easting') is not None:
-            northing = params['northing']
-            easting = params['easting']
         if params.get('test') is not None:
             self.serve_test_page()
+        elif params.get('map') is not None and params.get('northing') is not None and params.get('easting') is not None:
+            self.serve_map_page(params['easting'], params['northing'])
         else:
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps(params).encode('utf-8'))
-            self.server.path = self.path
+            self.serve_default_page(params)
 
+    def serve_map_page(self, easting, northing):
 
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(maprenderer.render_map(easting,northing).read().encode('utf-8'))
 
-
+    def serve_default_page(self, params):
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(params).encode('utf-8'))
+        self.server.path = self.path
+        
+maprenderer = MapRenderer()
 httpd = socketserver.TCPServer(("", 8080), MyServer)
 httpd.serve_forever()
 
-
-if __name__ == '__main__':
-    maprenderer = MapRenderer()
