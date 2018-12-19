@@ -24,7 +24,7 @@ In Browser:
 '''
 
 
-# define enum for use in various functions
+# define enum for use in various functions potentially
 Conversion = Enum('Conversion', 'bng_to_coords coords_to_bng')
 
 
@@ -46,6 +46,10 @@ class MapRenderer():
 
 
     def render_map(self, easting, northing):
+        icon = {}
+        icon['green'] = '{ url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"}'
+        icon['red'] = '{ url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"}'
+        icon['orange'] = '{ url: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"}'
         markers = ''
         centre = convert_lonlat([int(easting[0])], [int(northing[0])])
         it = 0
@@ -56,7 +60,7 @@ class MapRenderer():
             #print("BNG:", bng)
             coords = convert_lonlat([int(bng[0])],[int(bng[1])])
             #print("COORDS:", coords)
-            markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map}});'.format(lat=coords[1][0],lng=coords[0][0],it=it)
+            markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map, icon: {icon} }});'.format(lat=coords[1][0],lng=coords[0][0],it=it,icon=icon['green'])
         google_map = '''
                 <!DOCTYPE html>
                 <html>
@@ -89,7 +93,7 @@ class MapRenderer():
                 </html>
                 '''.format(height='600px',
                            width='100%',
-                           zoom=4,
+                           zoom=9,
                            centre_lon=centre[0][0],
                            centre_lat=centre[1][0],
                            markers=markers)
