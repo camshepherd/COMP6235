@@ -17,6 +17,10 @@ a suitable map with markers added in, along with their colours
 Hopefully possible to extend the functionality to colour entire roads
 NOTE that for generation purposes the base data set is used, rather than anything from any predictor, but it will
 be easy to substitute the correct data in later
+
+In Browser:
+    to see the map, set 'map' parameter to exist, and set the 'easting' and 'northing' parameters accordingly 
+    e.g. http://localhost:8080?map=true&easting=002500&northing=500000
 '''
 
 
@@ -52,7 +56,7 @@ class MapRenderer():
             #print("BNG:", bng)
             coords = convert_lonlat([int(bng[0])],[int(bng[1])])
             #print("COORDS:", coords)
-            markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map}})\r\n;'.format(lat=coords[1][0],lng=coords[0][0],it=it)
+            markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map}});'.format(lat=coords[1][0],lng=coords[0][0],it=it)
         google_map = '''
                 <!DOCTYPE html>
                 <html>
