@@ -34,23 +34,25 @@ class MapRenderer():
 
 
     def get_locations(self,easting,northing,radius):
-        print("Easting=", easting[0])
-        print("Northing=", northing[0])
+        #print("Easting=", easting[0])
+        #print("Northing=", northing[0])
         results = self.the_tree.query_ball_point([(easting[0],northing[0])], r=radius)
-        print("RESULTS:", results[0])
+        #print("RESULTS:", results[0])
         return results[0]
 
 
     def render_map(self, easting, northing):
         markers = ''
         centre = convert_lonlat([int(easting[0])], [int(northing[0])])
+        it = 0
         for point in self.get_locations(easting, northing, 50000):
-            print("POINT:", point)
+            it += 1
+            #print("POINT:", point)
             bng = self.weather_locations[point]
-            print("BNG:", bng)
+            #print("BNG:", bng)
             coords = convert_lonlat([int(bng[0])],[int(bng[1])])
-            print("COORDS:", coords)
-            markers += 'var marker = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map}});'.format(lat=coords[1][0],lng=coords[0][0])
+            #print("COORDS:", coords)
+            markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map}})\r\n;'.format(lat=coords[1][0],lng=coords[0][0],it=it)
         google_map = '''
                 <!DOCTYPE html>
                 <html>
@@ -81,8 +83,8 @@ class MapRenderer():
                         </script>
                     </body>
                 </html>
-                '''.format(height='80%',
-                           width='80%',
+                '''.format(height='600px',
+                           width='100%',
                            zoom=4,
                            centre_lon=centre[0][0],
                            centre_lat=centre[1][0],
@@ -92,7 +94,7 @@ class MapRenderer():
 '''
 Very primitive HTTP server to allow the acceptance of requests and the use of our existing systems to query the 
 pre-generated data efficiently and with minimal overhead
-Implementation is prrof-of-conept only, is not secure and cannot be extended to be so
+Implementation is proof-of-concept only, is not secure and cannot be extended to be so while using the BaseHTTPRequestHandler
 Server accepts standard GET parameters as part of the URL, unnecessary to extend to POST requests for this purpose
 '''
 class MyServer(server.BaseHTTPRequestHandler):
