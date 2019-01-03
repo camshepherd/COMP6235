@@ -74,7 +74,7 @@ class MapRenderer():
                         </style>
                     </head>
                     <body>
-                        <h3>My Google Maps Demo</h3>
+                        <h3>Traffic Points</h3>
                         <!--The div element for the map -->
                         <div id="map"></div>
                         <script>
@@ -105,7 +105,7 @@ pre-generated data efficiently and with minimal overhead
 Implementation is proof-of-concept only, is not secure and cannot be extended to be so while using the BaseHTTPRequestHandler
 Server accepts standard GET parameters as part of the URL, unnecessary to extend to POST requests for this purpose
 '''
-class MyServer(server.BaseHTTPRequestHandler):
+class LemServer(server.BaseHTTPRequestHandler):
 
     def serve_test_page(self):
         f = open(curdir + sep + '/test_page.html')
@@ -116,11 +116,16 @@ class MyServer(server.BaseHTTPRequestHandler):
         f.close()
     # override of the BaseHTTPRequestHandler function to handle GET requests
     def do_GET(self):
-        params = parse.parse_qs(parse.urlsplit(self.path).query)
+        split = parse.urlsplit(self.path)
+        print('path = ', split.path)
+        params = parse.parse_qs(split.query)
+
         if params.get('test') is not None:
             self.serve_test_page()
-        elif params.get('map') is not None and params.get('northing') is not None and params.get('easting') is not None:
+        elif (split.path == '/map' or split.path == '/map/') and params.get('northing') is not None and params.get('easting') is not None:
             self.serve_map_page(params['easting'], params['northing'])
+        elif split.path == '/home' or split.path == '/home/':
+            self.serve_home_page()
         else:
             self.serve_default_page(params)
 
@@ -131,16 +136,30 @@ class MyServer(server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(maprenderer.render_map(easting,northing).encode('utf-8'))
 
+
+    def serve_home_page(self):
+        f = open(curdir + sep + '/home_page.html')
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(f.read().encode('utf-8'))
+        f.close()
+
     def serve_default_page(self, params):
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(params).encode('utf-8'))
         self.server.path = self.path
-        
+
+print("Starting LemServer on port 8080...")
+print("Instantiating MapRenderer...")
 maprenderer = MapRenderer()
-print("Booting up LemServer...")
-httpd = socketserver.TCPServer(("", 8080), MyServer)
-print("LemServer running...")
+# Once running, the server is accessed on localhost:8080
+# The home page is on /home
+print("Launching server on port 8080...")
+httpd = socketserver.TCPServer(("", 8080), LemServer)
+print("LemServer is operational")
+print("running...")
 httpd.serve_forever()
-print("LemServer STOPPED")
+print("LemServer shut down")
