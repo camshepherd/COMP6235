@@ -131,13 +131,15 @@ class LemServer(server.BaseHTTPRequestHandler):
             self.serve_test_page()
         elif (split.path == '/map' or split.path == '/map/') and params.get('northing') is not None and params.get('easting') is not None:
             self.serve_map_page(params['easting'], params['northing'])
+        elif (split.path == '/map' or split.path == '/map/') and params.get('latitude') is not None and params.get('longitude') is not None:
+            centre = convert_bng([float(params['longitude'][0])], [float(params['latitude'][0])])
+            self.serve_map_page(centre[0], centre[1])
         elif split.path == '/home' or split.path == '/home/':
             self.serve_home_page()
         else:
             self.serve_default_page(params)
 
     def serve_map_page(self, easting, northing):
-
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
