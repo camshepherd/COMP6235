@@ -15,8 +15,11 @@ The convertbng python library is being used to convert between easting and north
 Basic map generator, intended that it will be possible for it to take the target easting and northing, then return
 a suitable map with markers added in, along with their colours
 Hopefully possible to extend the functionality to colour entire roads
+
 NOTE that for generation purposes the base data set is used, rather than anything from any predictor, but it will
 be easy to substitute the correct data in later
+
+NOTE that private browing is sometimes necessary to get reliable behaviour
 
 In Browser:
     to see the map, set 'map' parameter to exist, and set the 'easting' and 'northing' parameters accordingly 
@@ -61,6 +64,10 @@ class MapRenderer():
             coords = convert_lonlat([int(bng[0])],[int(bng[1])])
             #print("COORDS:", coords)
             markers += 'var marker{it} = new google.maps.Marker({{ position: {{ lat: {lat}, lng: {lng} }}, map: map, icon: {icon} }});'.format(lat=coords[1][0],lng=coords[0][0],it=it,icon=icon['green'])
+            markers += 'var content{it} = \'<div id="content{it}"> <H1 class="infoTitle"> {name} </H1> <div class="bodyContent"> <p><b>{name}</b></p> </div> </div>\';'.format(it=it,name="Place")
+            #markers += 'var content{it} = \'stufff herer \';'.format(it=it)
+            markers += 'var infowindow{it} = new google.maps.InfoWindow({{content: content{it}}});'.format(it=it)
+            markers += 'marker{it}.addListener("click",function(){{infowindow{it}.open(map,marker{it});}});'.format(it=it)
         google_map = '''
                 <!DOCTYPE html>
                 <html>
@@ -103,7 +110,7 @@ class MapRenderer():
 Very primitive HTTP server to allow the acceptance of requests and the use of our existing systems to query the 
 pre-generated data efficiently and with minimal overhead
 Implementation is proof-of-concept only, is not secure and cannot be extended to be so while using the BaseHTTPRequestHandler
-Server accepts standard GET parameters as part of the URL, unnecessary to extend to POST requests for this purpose
+Server accepts standard GET parameters as part of the URL, it is unnecessary to extend to using POST requests for this purpose
 '''
 class LemServer(server.BaseHTTPRequestHandler):
 

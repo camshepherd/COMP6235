@@ -15,3 +15,5 @@ venv
 website/Testing\.ipynb
 
 website/\.ipynb_checkpoints/Testing-checkpoint\.ipynb
+
+website/met_data_partial\.csv
