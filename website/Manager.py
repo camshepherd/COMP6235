@@ -131,23 +131,30 @@ class LemServer(server.BaseHTTPRequestHandler):
             self.serve_test_page()
         elif (split.path == '/map' or split.path == '/map/') and params.get('northing') is not None and params.get('easting') is not None:
             self.serve_map_page(params['easting'], params['northing'])
-        elif (split.path == '/map' or split.path == '/map/') and params.get('latitude') is not None and params.get('longitude') is not None:
-            centre = convert_bng([float(params['longitude'][0])], [float(params['latitude'][0])])
-            self.serve_map_page(centre[0], centre[1])
+        elif (split.path == '/map' or split.path == '/map/'):
+            if params.get('latitude') is not None and params.get('longitude') is not None:
+                centre = convert_bng([float(params['longitude'][0])], [float(params['latitude'][0])])
+                self.serve_map_page(centre[0], centre[1], True)
+            else:
+                self.serve_map_page([888887], [777773], False)
         elif split.path == '/home' or split.path == '/home/':
             self.serve_home_page()
         else:
             self.serve_default_page(params)
 
-    def serve_map_page(self, easting, northing):
+    def serve_map_page(self, easting, northing, full):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(maprenderer.render_map(easting,northing).encode('utf-8'))
-
+        with open(curdir + sep + '/map_1.html') as f:
+            self.wfile.write(f.read().encode('utf-8'))
+        if full:
+            self.wfile.write(maprenderer.render_map(easting,northing).encode('utf-8'))
+        with open(curdir + sep + '/map_2.html') as g:
+            self.wfile.write(g.read().encode('utf-8'))
 
     def serve_home_page(self):
-        f = open(curdir + sep + '/home_page.html')
+        f = open(curdir + sep + '/home_page2.html')
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
