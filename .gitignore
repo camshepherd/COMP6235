@@ -12,3 +12,8 @@ traff_met_merging\.ipynb
 Raw_count_data_major_roads\.csv
 
 venv
+website/Testing\.ipynb
+
+website/\.ipynb_checkpoints/Testing-checkpoint\.ipynb
+
+website/met_data_partial\.csv
