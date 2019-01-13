@@ -87,6 +87,12 @@ body {
   font-size: 50px;
   padding: ;
 }
+/* Set the size of the div element that contains the map */
+#map {
+height: 900px;  /* The height is 400 pixels */
+width: 100%;  /* The width is the width of the web page */
+}
+
 </style>
 </head>
 <body>
@@ -114,6 +120,16 @@ body {
         <input type="text" name="easting" value="449354" maxlength="6" pattern="[0-9]{6}"> <br />
         Northing: <br />
         <input type="text" name="northing" value="106209" maxlength="6" pattern="[0-9]{6}"> <br />
+        Date: <br />
+        <input type="date" name="date" min="2000-01-01" max="2016-12-31"> <br />
+        Minimum Temperature(°C): <br />
+        <input type="text" name="tempmin" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Maximum Temperature(C): <br />
+        <input type="text" name="tempmax" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Mean Temperature(°C): <br />
+        <input type="text" name="tempmean" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Rainfall(mm): <br />
+        <input type="text" name="rainfall" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
         <input type="submit" value="submit">
         </form>
       </td>
@@ -123,6 +139,16 @@ body {
         <input type="text" name="latitude" value="50.853303" pattern="[0-9]+(?:\.[0-9]+)?"> <br />
         Longitude: <br />
         <input type="text" name="longitude" value="-1.3002384" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Date: <br />
+        <input type="date" name="date" min="2000-01-01" max="2016-12-31"> <br />
+        Minimum Temperature(°C): <br />
+        <input type="text" name="tempmin" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Maximum Temperature(°C): <br />
+        <input type="text" name="tempmax" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Mean Temperature(°C): <br />
+        <input type="text" name="tempmean" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
+        Rainfall(mm): <br />
+        <input type="text" name="rainfall" pattern="[+-]?[0-9]+(?:\.[0-9]+)?"> <br />
         <input type="submit" value="submit">
         </form>
       </td>
@@ -130,5 +156,3 @@ body {
   </table>
 </div>
 <div class="text">
-  <p>
-  
