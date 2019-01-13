@@ -4,30 +4,20 @@ An Analysis into using Weather Data to Predict Volume and Makeup of Traffic in t
 
 ## Getting Started
 
-Not really anything to download yet...
-But watch this space
-
+The website is cross-platform, except for the convertbng library which does not work on 64-bit Windows. We recommend that WSL is used for running the 64-bit web server on Windows. The web server will take about 10-15 minutes to boot up due to the size of the data files to load into memory.
 ### Libraries
 
 * Python3 with:
     * pandas
     * SciPy
     * NumPy
-    * probably a pile of other stuff
-* R with:
-    * some stuff probably 
+    * convertbng
 
 ### Installing
 
-Checkout the stuff and do stuff with the stuff until things happen and then push that stuff back to the pile of stuff
-
+You need to have the full data files from MET Office/CEDA and the Highways Agency. 
 
 ## Authors
 
 * The Lemmings: 
-![Lemming on umbrella](http://kaijupop.com/wp-content/uploads/2013/06/Lemming.jpg)
-
-
-## License
-
-Screw licenses - this is only public because we have to make it so
+Cameron Shepherd, Tom Bardrick, Molly Atkinson
